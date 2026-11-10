@@ -3,23 +3,26 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
+import { AuthShellComponent } from './shell.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, AuthShellComponent],
   template: `
-  <div class="center-page">
+  <app-auth-shell [wide]="true">
     @if (done()) {
-      <div class="card auth-card" style="text-align:center">
-        <h2>تم استلام طلبك ✓</h2>
+      <div class="stack" style="text-align:center">
+        <h1 style="font-size:26px">تم استلام طلبك ✓</h1>
         <p class="muted">هنراجع بيانات الصيدلية ورقم الرخصة، وهنبعتلك رسالة على رقمك لما يتم الاعتماد.</p>
         <a class="btn btn-primary" routerLink="/login">تسجيل الدخول</a>
       </div>
     } @else {
-    <form class="card auth-card" style="max-width:560px" (ngSubmit)="submit()">
-      <div class="brand" style="padding:0">MedFinder</div>
-      <h2>تسجيل صيدلية جديدة</h2>
+    <form class="stack" (ngSubmit)="submit()">
+      <div>
+        <h1 style="font-size:26px">تسجيل صيدلية جديدة</h1>
+        <p class="muted" style="margin:6px 0 0">املا البيانات وارفع صورة الرخصة، وهنراجعها ونفعّل حسابك.</p>
+      </div>
 
       <div class="field"><label for="pn">اسم الصيدلية</label><input id="pn" name="pn" [(ngModel)]="f.pharmacyName" required></div>
       <div class="field"><label for="ph">اسم الصيدلي</label><input id="ph" name="ph" [(ngModel)]="f.pharmacistName" required></div>
@@ -55,10 +58,10 @@ import { AuthService } from '../core/auth.service';
 
       @if (error()) { <div class="err" role="alert">{{ error() }}</div> }
       <button class="btn btn-primary" type="submit" [disabled]="busy()">{{ busy() ? 'جاري الإرسال...' : 'إرسال طلب التسجيل' }}</button>
-      <div class="muted" style="text-align:center">عندك حساب؟ <a routerLink="/login">تسجيل الدخول</a></div>
+      <div class="muted" style="text-align:center">عندك حساب؟ <a routerLink="/login"><b>تسجيل الدخول</b></a></div>
     </form>
     }
-  </div>`
+  </app-auth-shell>`
 })
 export class RegisterComponent implements OnInit {
   private api = inject(ApiService);

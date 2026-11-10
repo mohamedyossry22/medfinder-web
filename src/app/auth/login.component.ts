@@ -2,17 +2,19 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { AuthShellComponent } from './shell.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, AuthShellComponent],
   template: `
-  <div class="center-page">
-    <form class="card auth-card" (ngSubmit)="submit()">
-      <div class="brand" style="padding:0">MedFinder</div>
-      <h2>تسجيل الدخول</h2>
-      <p class="muted" style="margin:0">للصيدليات ولوحة الإدارة</p>
+  <app-auth-shell>
+    <form class="stack" (ngSubmit)="submit()">
+      <div>
+        <h1 style="font-size:28px">أهلاً بيك</h1>
+        <p class="muted" style="margin:6px 0 0">سجّل دخولك للوحة الصيدلية أو لوحة الإدارة</p>
+      </div>
 
       <div class="field">
         <label for="email">البريد الإلكتروني</label>
@@ -26,9 +28,9 @@ import { AuthService } from '../core/auth.service';
       @if (error()) { <div class="err" role="alert">{{ error() }}</div> }
 
       <button class="btn btn-primary" type="submit" [disabled]="busy()">{{ busy() ? 'جاري الدخول...' : 'دخول' }}</button>
-      <div class="muted" style="text-align:center">صيدلية جديدة؟ <a routerLink="/register">سجّل صيدليتك</a></div>
+      <div class="muted" style="text-align:center">صيدلية جديدة؟ <a routerLink="/register"><b>سجّل صيدليتك</b></a></div>
     </form>
-  </div>`
+  </app-auth-shell>`
 })
 export class LoginComponent {
   private auth = inject(AuthService);

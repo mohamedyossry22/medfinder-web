@@ -17,6 +17,8 @@ export class RealtimeService {
   readonly newRequest$ = new Subject<IncomingRequest>();
   /** بعد انقطاع واتصال تاني: لازم نعيد تحميل القوائم لأن ممكن نكون فوّتنا أحداث */
   readonly reconnected$ = new Subject<void>();
+  /** المستخدم أكد الاستلام: الطلب اتقفل وبيتشال من شاشتنا */
+  readonly requestClosed$ = new Subject<void>();
 
   async start() {
     if (this.hub) return;
@@ -27,6 +29,7 @@ export class RealtimeService {
       .build();
 
     this.hub.on('NewRequest', (r: IncomingRequest) => this.newRequest$.next(r));
+    this.hub.on('RequestClosed', () => this.requestClosed$.next());
     this.hub.onreconnecting(() => this.connected.set(false));
     this.hub.onreconnected(() => { this.connected.set(true); this.reconnected$.next(); });
     this.hub.onclose(() => { this.connected.set(false); this.scheduleRetry(); });
