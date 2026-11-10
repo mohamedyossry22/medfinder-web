@@ -4,12 +4,14 @@ import { ApiService } from '../core/api.service';
 import { RealtimeService } from '../core/realtime.service';
 import { IncomingRequest, ReadyItem } from '../core/models';
 import { beep } from '../core/sound';
+import { PushService } from '../core/push.service';
 
 /** حالة صفحات الصيدلية: الواردة + الجاهزة، وبتتحدث لايف من SignalR */
 @Injectable({ providedIn: 'root' })
 export class PharmacyStore {
   private api = inject(ApiService);
   private rt = inject(RealtimeService);
+  private push = inject(PushService);
 
   readonly incoming = signal<IncomingRequest[]>([]);
   readonly ready = signal<ReadyItem[]>([]);
@@ -31,7 +33,8 @@ export class PharmacyStore {
     this.timer = setInterval(() => this.now.set(Date.now()), 30_000);
     this.subs.push(
       this.rt.newRequest$.subscribe(r => this.onNew(r)),
-      this.rt.reconnected$.subscribe(() => this.reload(false)));
+      this.rt.reconnected$.subscribe(() => this.reload(false)),
+      this.rt.requestClosed$.subscribe(() => this.reload(false)));
     await this.reload(true);
   }
 
@@ -49,7 +52,7 @@ export class PharmacyStore {
     this.fresh.update(s => new Set(s).add(r.targetId));
     setTimeout(() => this.fresh.update(s => { const n = new Set(s); n.delete(r.targetId); return n; }), 15_000);
     beep();
-    if (document.hidden && 'Notification' in window && Notification.permission === 'granted')
+    if (!this.push.active() && document.hidden && 'Notification' in window && Notification.permission === 'granted')
       new Notification('طلب دواء جديد', { body: `${r.drugNameAr} — ${r.quantity} علبة`, tag: r.targetId });
   }
 

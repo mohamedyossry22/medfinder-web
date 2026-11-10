@@ -28,8 +28,9 @@ h1,h2,h3 { margin:0; }
 .stack { display:flex; flex-direction:column; gap:14px; }
 
 /* layout */
-.shell { display:flex; min-height:100vh; }
-.side { width:240px; flex-shrink:0; background:var(--surface); padding:24px 14px; display:flex; flex-direction:column; gap:6px; border-inline-end:1px solid var(--line); }
+.shell { display:flex; align-items:flex-start; min-height:100vh; }
+/* السايد بار ثابت بطول الشاشة مهما كان طول الصفحة، وتسجيل الخروج دايمًا في آخره */
+.side { position:sticky; top:0; align-self:flex-start; width:240px; flex-shrink:0; height:100vh; height:100dvh; overflow-y:auto; background:var(--surface); padding:24px 14px; display:flex; flex-direction:column; gap:6px; border-inline-end:1px solid var(--line); }
 .brand { font-size:22px; font-weight:700; color:var(--primary); padding:0 14px 16px; }
 .nav { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 14px; border-radius:var(--radius-sm); color:var(--muted); font:600 15px Cairo,sans-serif; background:none; border:0; cursor:pointer; text-align:start; }
 .nav:hover { background:var(--primary-soft); }
@@ -37,7 +38,13 @@ h1,h2,h3 { margin:0; }
 .main { flex:1; min-width:0; padding:28px 32px; display:flex; flex-direction:column; gap:22px; }
 .top { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
 .top h1 { font-size:26px; }
-@media (max-width:800px){ .shell{flex-direction:column} .side{width:auto;flex-direction:row;flex-wrap:wrap;padding:12px} .brand{padding:0 8px} .main{padding:18px} }
+@media (max-width:800px){ .shell{flex-direction:column;align-items:stretch} .side{position:static;width:auto;height:auto;flex-direction:row;flex-wrap:wrap;padding:12px} .brand{padding:0 8px} .main{padding:18px} }
+
+/* الصفحة اللي بتتحمّل جوه router-outlet: نخلّيها عمود بمسافات بين كل عناصرها
+   (من غير كده الكروت كانت بتلزق في بعض لأن عنصر الصفحة نفسه مش flex) */
+.main > router-outlet + * { display:flex; flex-direction:column; gap:22px; min-width:0; }
+html { scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } }
 
 /* components */
 .card { background:var(--surface); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); border:1px solid var(--line); display:flex; flex-direction:column; gap:12px; }

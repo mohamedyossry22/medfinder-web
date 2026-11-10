@@ -1,31 +1,95 @@
-export type Role = 'Admin' | 'Pharmacy' | 'User';
-export type PharmacyStatus = 'Pending' | 'Approved' | 'Rejected' | 'Suspended';
-export type TargetStatus = 'Pending' | 'Available' | 'Partial' | 'Unavailable' | 'Delivered' | 'Expired';
+export type Role = "Admin" | "Pharmacy" | "User";
+export type PharmacyStatus = "Pending" | "Approved" | "Rejected" | "Suspended";
+export type TargetStatus =
+  | "Pending"
+  | "Available"
+  | "Partial"
+  | "Unavailable"
+  | "Delivered"
+  | "Expired";
 
-export interface AuthResponse { token: string; role: Role; fullName: string; pharmacyStatus: PharmacyStatus | null; }
+export interface AuthResponse {
+  token: string;
+  role: Role;
+  fullName: string;
+  pharmacyStatus: PharmacyStatus | null;
+}
 
 export interface IncomingRequest {
-  targetId: string; requestId: string; drugNameEn: string; drugNameAr: string; activeIngredient: string | null;
-  quantity: number; distanceKm: number; createdAt: string; expiresAt: string;
+  targetId: string;
+  requestId: string;
+  drugNameEn: string;
+  drugNameAr: string;
+  activeIngredient: string | null;
+  quantity: number;
+  distanceKm: number;
+  createdAt: string;
+  expiresAt: string;
 }
 export interface ReadyItem {
-  targetId: string; drugNameEn: string; drugNameAr: string; quantity: number; availableQty: number;
-  status: TargetStatus; respondedAt: string; expiresAt: string;
+  targetId: string;
+  drugNameEn: string;
+  drugNameAr: string;
+  quantity: number;
+  availableQty: number;
+  status: TargetStatus;
+  respondedAt: string;
+  expiresAt: string;
 }
 export interface RequestDetail {
-  id: string; requestId: string; drugNameEn: string; drugNameAr: string; activeIngredient: string | null;
-  manufacturer: string | null; route: string | null; quantity: number; distanceKm: number;
-  status: TargetStatus; availableQty: number | null; createdAt: string; expiresAt: string;
+  id: string;
+  requestId: string;
+  drugNameEn: string;
+  drugNameAr: string;
+  activeIngredient: string | null;
+  manufacturer: string | null;
+  route: string | null;
+  quantity: number;
+  distanceKm: number;
+  status: TargetStatus;
+  availableQty: number | null;
+  createdAt: string;
+  expiresAt: string;
 }
-export interface PharmacyMe { id: string; name: string; pharmacistName: string; governorate: string; status: PharmacyStatus; reason: string | null; }
+export interface PharmacyMe {
+  id: string;
+  name: string;
+  pharmacistName: string;
+  governorate: string;
+  status: PharmacyStatus;
+  reason: string | null;
+}
 
-export interface Paged<T> { total: number; page: number; pageSize: number; items: T[]; }
-export interface AdminPharmacyRow { id: string; name: string; pharmacistName: string; licenseNumber: string; governorate: string; status: PharmacyStatus; createdAt: string; }
-export interface AdminPharmacy extends AdminPharmacyRow {
-  mapsUrl: string; lat: number; lng: number; phone: string; address: string | null; reason: string | null;
-  reviewedAt: string | null; email: string; licenseImageUrl: string;
+export interface Paged<T> {
+  total: number;
+  page: number;
+  pageSize: number;
+  items: T[];
 }
-export interface DrugName { nameEn: string; nameAr: string; }
+export interface AdminPharmacyRow {
+  id: string;
+  name: string;
+  pharmacistName: string;
+  licenseNumber: string;
+  governorate: string;
+  status: PharmacyStatus;
+  createdAt: string;
+}
+export interface AdminPharmacy extends AdminPharmacyRow {
+  mapsUrl: string;
+  lat: number;
+  lng: number;
+  phone: string;
+  address: string | null;
+  reason: string | null;
+  reviewedAt: string | null;
+  email: string;
+  licenseImageUrl: string;
+}
+export interface DrugName {
+  nameEn: string;
+  nameAr: string;
+}
 export interface Stats {
   users: number;
   pharmacies: Record<string, number>;
@@ -35,4 +99,83 @@ export interface Stats {
   topRequested: { drug: DrugName; count: number }[];
   unansweredDemand: { drug: DrugName; count: number }[];
   byGovernorate: { governorate: string; requests: number }[];
+}
+
+export type AdStatus = "Pending" | "Approved" | "Rejected";
+export interface MyAd {
+  id: string;
+  title: string;
+  imagePath: string;
+  linkUrl: string | null;
+  startDate: string;
+  endDate: string;
+  status: AdStatus;
+  rejectionReason: string | null;
+}
+export interface AdminAd {
+  id: string;
+  title: string;
+  imagePath: string;
+  linkUrl: string | null;
+  startDate: string;
+  endDate: string;
+  status: AdStatus;
+  pharmacyName: string;
+}
+export interface AdminUser {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  age: number | null;
+  isBanned: boolean;
+  banReason: string | null;
+  createdAt: string;
+}
+export interface PendingBarcode {
+  id: number;
+  code: string;
+  confirmCount: number;
+  source: string;
+  drugId: string;
+  drugNameEn: string;
+  drugNameAr: string;
+}
+
+export interface HistoryItem {
+  targetId: string;
+  drugNameEn: string;
+  drugNameAr: string;
+  quantity: number;
+  deliveredAt: string;
+  confirmedByUser: boolean;
+}
+export interface HistoryPage {
+  total: number;
+  totalQuantity: number;
+  page: number;
+  pageSize: number;
+  items: HistoryItem[];
+}
+export interface PharmacyProfile {
+  name: string;
+  pharmacistName: string;
+  licenseNumber: string;
+  governorate: string;
+  phone: string;
+  address: string | null;
+  mapsUrl: string;
+  lat: number;
+  lng: number;
+  status: PharmacyStatus;
+  email: string | null;
+}
+export interface ProfileUpdate {
+  pharmacyName?: string;
+  pharmacistName?: string;
+  phone?: string;
+  address?: string;
+  governorate?: string;
+  mapsUrl?: string;
+  lat?: number | null;
+  lng?: number | null;
 }
