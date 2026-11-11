@@ -1,6 +1,7 @@
 import { Component, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PharmacyStore } from './pharmacy.store';
+import { PointsDialogService } from './points-dialog.component';
 
 /** الأزرار الأربعة: متوفر / متوفر جزئي / غير متوفر + (تفاصيل عبر ng-content) */
 @Component({
@@ -26,6 +27,7 @@ import { PharmacyStore } from './pharmacy.store';
 })
 export class ResponseActionsComponent {
   private store = inject(PharmacyStore);
+  private pointsDialog = inject(PointsDialogService);
   targetId = input.required<string>();
   quantity = input.required<number>();
   done = output<void>();
@@ -39,7 +41,8 @@ export class ResponseActionsComponent {
     }
     this.busy.set(true); this.error.set('');
     try {
-      await this.store.respond(this.targetId(), status, status === 'Partial' ? this.qty : undefined);
+      const r = await this.store.respond(this.targetId(), status, status === 'Partial' ? this.qty : undefined);
+      if (r?.pointsAwarded > 0) this.pointsDialog.show(r);   // مبروك: نقاط جديدة
       this.done.emit();
     } catch (e: any) {
       const c = e?.error?.error;

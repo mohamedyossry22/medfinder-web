@@ -24,7 +24,7 @@ import { hoursLeft, remainingFrac, timeAgo } from '../core/fmt';
               @if (store.fresh().has(r.targetId)) { <span class="badge">جديد</span> }
               <div dir="ltr" style="font-weight:700;font-size:16px;text-align:right">{{ r.drugNameEn }}</div>
               <div class="muted">{{ r.drugNameAr }}</div>
-              @if (r.activeIngredient) { <div class="muted" dir="ltr" style="font-size:12px;text-align:right">{{ r.activeIngredient }}</div> }
+              @if (r.activeIngredient) { <div class="muted" dir="ltr" style="font-size:12px;text-align:right;word-break: break-word;">{{ r.activeIngredient }}</div> }
             </div>
             <svg width="48" height="48" viewBox="0 0 48 48" role="img" [attr.aria-label]="'متبقي ' + left(r.expiresAt) + ' ساعة'">
               <circle cx="24" cy="24" r="19" fill="none" stroke="var(--primary-soft)" stroke-width="5"/>

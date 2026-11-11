@@ -82,7 +82,11 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--prima
 .st-Pending { background:var(--pe-soft); color:var(--pe); }
 .st-Rejected,.st-Suspended { background:var(--danger-soft); color:var(--danger); }
 .st-Partial { background:var(--pa-soft); color:var(--pa); }
-.st-Unavailable,.st-Expired { background:var(--no-soft); color:var(--no); }
+.st-Unavailable,.st-Expired,.st-Stopped { background:var(--no-soft); color:var(--no); }
+.st-New { background:var(--pe-soft); color:var(--pe); }
+.st-InReview { background:var(--pa-soft); color:var(--pa); }
+.st-Resolved { background:var(--ok-soft); color:var(--ok); }
+.st-Closed { background:var(--no-soft); color:var(--no); }
 
 .tabs { display:flex; gap:8px; flex-wrap:wrap; }
 .tab { border:0; border-radius:999px; padding:8px 16px; font:600 13px Cairo,sans-serif; background:var(--primary-soft); color:var(--primary-ink); cursor:pointer; }

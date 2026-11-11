@@ -1,6 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../core/auth.service';
+import { RealtimeService } from '../core/realtime.service';
+import { beep } from '../core/sound';
+import { ComplaintsStore } from './complaints.store';
 import { LogoComponent } from './logo.component';
 
 @Component({
@@ -14,6 +18,9 @@ import { LogoComponent } from './logo.component';
       <a class="nav" routerLink="dashboard" routerLinkActive="on">الإحصائيات</a>
       <a class="nav" routerLink="pharmacies" routerLinkActive="on">طلبات الصيدليات</a>
       <a class="nav" routerLink="users" routerLinkActive="on">المستخدمين</a>
+      <a class="nav" routerLink="complaints" routerLinkActive="on">الشكاوى
+        @if (store.newCount() > 0) { <span class="badge" aria-label="شكاوى جديدة">{{ store.newCount() }}</span> }
+      </a>
       <a class="nav" routerLink="ads" routerLinkActive="on">الإعلانات</a>
       <a class="nav" routerLink="barcodes" routerLinkActive="on">الباركودات</a>
       <div class="grow"></div>
@@ -23,4 +30,22 @@ import { LogoComponent } from './logo.component';
     <main class="main"><router-outlet></router-outlet></main>
   </div>`
 })
-export class AdminLayoutComponent { auth = inject(AuthService); }
+export class AdminLayoutComponent implements OnInit, OnDestroy {
+  auth = inject(AuthService);
+  store = inject(ComplaintsStore);
+  private rt = inject(RealtimeService);
+  private subs = new Subscription();
+
+  ngOnInit() {
+    this.store.refresh();
+    // شكوى جديدة لايف: البادج + نغمة. وبعد أي إعادة اتصال نعيد العدّ لأن ممكن نكون فوّتنا شكاوى
+    this.subs.add(this.rt.newComplaint$.subscribe(() => { this.store.refresh(); beep(); }));
+    this.subs.add(this.rt.reconnected$.subscribe(() => this.store.refresh()));
+    this.rt.start();
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
+    this.rt.stop();
+  }
+}

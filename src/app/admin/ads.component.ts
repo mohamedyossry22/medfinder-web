@@ -26,10 +26,10 @@ import { statusAr } from '../core/fmt';
         <div class="muted" style="font-size:13px">{{ a.pharmacyName }} · {{ a.startDate.slice(0, 10) }} ← {{ a.endDate.slice(0, 10) }}</div>
         @if (a.linkUrl) { <a dir="ltr" target="_blank" rel="noopener" [href]="a.linkUrl" style="font-size:12px;word-break:break-all">{{ a.linkUrl }}</a> }
 
-        @if (a.status !== 'Approved') {
+        @if (a.status === 'Pending' || a.status === 'Rejected') {
           <button class="btn btn-primary" [disabled]="busy() === a.id" (click)="act(a, 'approve')">اعتماد</button>
         }
-        @if (a.status !== 'Rejected') {
+        @if (a.status === 'Pending' || a.status === 'Approved') {
           @if (rejecting() === a.id) {
             <div class="field"><label [for]="'rr' + a.id">سبب الرفض</label><input [id]="'rr' + a.id" [name]="'rr' + a.id" [(ngModel)]="reason"></div>
             <div class="row">

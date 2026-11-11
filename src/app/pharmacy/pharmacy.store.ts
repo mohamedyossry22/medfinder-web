@@ -59,9 +59,10 @@ export class PharmacyStore {
   drop(targetId: string) { this.incoming.update(l => l.filter(x => x.targetId !== targetId)); }
 
   async respond(targetId: string, status: 'Available' | 'Partial' | 'Unavailable', qty?: number) {
-    await firstValueFrom(this.api.respond(targetId, status, qty));
+    const result = await firstValueFrom(this.api.respond(targetId, status, qty));
     this.drop(targetId);
     if (status !== 'Unavailable') this.ready.set(await firstValueFrom(this.api.ready()));
+    return result;
   }
 
   async deliver(targetId: string) {

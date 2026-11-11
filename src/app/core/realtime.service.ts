@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { API } from './config';
 import { AuthService } from './auth.service';
-import { IncomingRequest } from './models';
+import { AdminComplaint, IncomingRequest } from './models';
 
 /** اتصال SignalR: الطلبات الجديدة بتوصل لايف من غير Refresh */
 @Injectable({ providedIn: 'root' })
@@ -19,6 +19,8 @@ export class RealtimeService {
   readonly reconnected$ = new Subject<void>();
   /** المستخدم أكد الاستلام: الطلب اتقفل وبيتشال من شاشتنا */
   readonly requestClosed$ = new Subject<void>();
+  /** (للأدمن) شكوى جديدة وصلت */
+  readonly newComplaint$ = new Subject<AdminComplaint>();
 
   async start() {
     if (this.hub) return;
@@ -30,6 +32,7 @@ export class RealtimeService {
 
     this.hub.on('NewRequest', (r: IncomingRequest) => this.newRequest$.next(r));
     this.hub.on('RequestClosed', () => this.requestClosed$.next());
+    this.hub.on('NewComplaint', (c: AdminComplaint) => this.newComplaint$.next(c));
     this.hub.onreconnecting(() => this.connected.set(false));
     this.hub.onreconnected(() => { this.connected.set(true); this.reconnected$.next(); });
     this.hub.onclose(() => { this.connected.set(false); this.scheduleRetry(); });

@@ -101,7 +101,7 @@ export interface Stats {
   byGovernorate: { governorate: string; requests: number }[];
 }
 
-export type AdStatus = "Pending" | "Approved" | "Rejected";
+export type AdStatus = "Pending" | "Approved" | "Rejected" | "Stopped";
 export interface MyAd {
   id: string;
   title: string;
@@ -178,4 +178,31 @@ export interface ProfileUpdate {
   mapsUrl?: string;
   lat?: number | null;
   lng?: number | null;
+}
+
+export type ComplaintStatus = 'New' | 'InReview' | 'Resolved' | 'Closed';
+export type ComplaintCategory = 'Request' | 'Pharmacy' | 'User' | 'App' | 'Other';
+export interface AdminComplaint {
+  id: string;
+  senderRole: 'User' | 'Pharmacy';
+  senderName: string;
+  senderPhone: string | null;
+  senderEmail: string | null;
+  pharmacyName: string | null;
+  category: ComplaintCategory;
+  subject: string;
+  message: string;
+  status: ComplaintStatus;
+  adminReply: string | null;
+  createdAt: string;
+  reviewedAt: string | null;
+}
+
+// ── النقاط ورصيد الإعلانات ──
+export interface RespondResult { status: string; pointsAwarded: number; pointsBalance: number | null; }
+export type PointsReason = 'Reply' | 'Missed' | 'AdSpend' | 'AdRefund';
+export interface PointsHistoryItem { delta: number; reason: PointsReason; note: string | null; createdAt: string; }
+export interface AdBalance {
+  freeAds: number; freeAdsMax: number; points: number; pointsPerAd: number; adsFromPoints: number;
+  maxAdDays: number; renewsAt: string; history: PointsHistoryItem[];
 }

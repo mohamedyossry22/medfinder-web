@@ -31,6 +31,7 @@ export const routes: Routes = [
       { path: 'pharmacies', loadComponent: () => import('./admin/pharmacies.component').then(m => m.PharmaciesComponent) },
       { path: 'pharmacies/:id', loadComponent: () => import('./admin/pharmacy-detail.component').then(m => m.PharmacyDetailComponent) },
       { path: 'users', loadComponent: () => import('./admin/users.component').then(m => m.UsersComponent) },
+      { path: 'complaints', loadComponent: () => import('./admin/complaints.component').then(m => m.ComplaintsComponent) },
       { path: 'ads', loadComponent: () => import('./admin/ads.component').then(m => m.AdminAdsComponent) },
       { path: 'barcodes', loadComponent: () => import('./admin/barcodes.component').then(m => m.BarcodesComponent) }
     ]

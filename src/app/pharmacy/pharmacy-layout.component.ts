@@ -8,11 +8,12 @@ import { statusAr } from "../core/fmt";
 import { PushService } from "../core/push.service";
 import { PharmacyStore } from "./pharmacy.store";
 import { LogoComponent } from "../admin/logo.component";
+import { PointsDialogComponent } from "./points-dialog.component";
 
 @Component({
   selector: "app-pharmacy-layout",
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, LogoComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, LogoComponent, PointsDialogComponent],
   template: ` <div class="shell">
     <aside class="side">
       <div class="brand"><app-logo [size]="36"></app-logo></div>
@@ -106,6 +107,7 @@ import { LogoComponent } from "../admin/logo.component";
         <div class="err">تعذر تحميل بيانات الحساب</div>
       }
     </main>
+    <app-points-dialog></app-points-dialog>
   </div>`,
 })
 export class PharmacyLayoutComponent implements OnInit, OnDestroy {

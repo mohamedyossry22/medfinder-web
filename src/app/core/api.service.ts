@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { API } from './config';
 import {
-  HistoryPage, PharmacyProfile, ProfileUpdate, AdminAd, AdminPharmacy, AdminPharmacyRow, AdminUser, AdStatus, IncomingRequest, MyAd, Paged, PendingBarcode,
+  HistoryPage, PharmacyProfile, ProfileUpdate, AdminAd, AdminComplaint, AdminPharmacy, AdminPharmacyRow, AdminUser, AdBalance, AdStatus, ComplaintStatus, IncomingRequest, RespondResult, MyAd, Paged, PendingBarcode,
   PharmacyMe, PharmacyStatus, ReadyItem, RequestDetail, Stats
 } from './models';
 
@@ -17,7 +17,7 @@ export class ApiService {
   incoming() { return this.http.get<IncomingRequest[]>(`${API}/api/pharmacy/requests/incoming`); }
   request(targetId: string) { return this.http.get<RequestDetail>(`${API}/api/pharmacy/requests/${targetId}`); }
   respond(targetId: string, status: 'Available' | 'Partial' | 'Unavailable', availableQty?: number) {
-    return this.http.post(`${API}/api/pharmacy/requests/${targetId}/respond`, { status, availableQty: availableQty ?? null });
+    return this.http.post<RespondResult>(`${API}/api/pharmacy/requests/${targetId}/respond`, { status, availableQty: availableQty ?? null });
   }
   ready() { return this.http.get<ReadyItem[]>(`${API}/api/pharmacy/ready`); }
   deliver(targetId: string) { return this.http.post(`${API}/api/pharmacy/ready/${targetId}/deliver`, {}); }
@@ -53,6 +53,11 @@ export class ApiService {
 
   // ── إعلانات الصيدلية ──
   myAds() { return this.http.get<MyAd[]>(`${API}/api/pharmacy/ads`); }
+  adBalance() { return this.http.get<AdBalance>(`${API}/api/pharmacy/ads/balance`); }
+  stopAd(id: string) { return this.http.post(`${API}/api/pharmacy/ads/${id}/stop`, {}); }
+  republishAd(id: string, startDate: string, endDate: string) {
+    return this.http.post(`${API}/api/pharmacy/ads/${id}/republish`, { startDate, endDate });
+  }
   createAd(fd: FormData) { return this.http.post(`${API}/api/pharmacy/ads`, fd); }
 
   // ── الأدمن: المستخدمين / الإعلانات / الباركودات ──
@@ -71,6 +76,19 @@ export class ApiService {
   }
   adAction(id: string, action: 'approve' | 'reject', reason?: string) {
     return this.http.post(`${API}/api/admin/ads/${id}/${action}`, { reason: reason ?? null });
+  }
+
+  // ── الأدمن: الشكاوى ──
+  adminComplaints(p: { status?: ComplaintStatus | ''; role?: 'User' | 'Pharmacy' | ''; q?: string; page?: number }) {
+    let params = new HttpParams().set('page', p.page ?? 1).set('pageSize', 15);
+    if (p.status) params = params.set('status', p.status);
+    if (p.role) params = params.set('role', p.role);
+    if (p.q) params = params.set('q', p.q);
+    return this.http.get<Paged<AdminComplaint>>(`${API}/api/admin/complaints`, { params });
+  }
+  complaintsNewCount() { return this.http.get<{ newCount: number }>(`${API}/api/admin/complaints/count`); }
+  respondComplaint(id: string, status: ComplaintStatus, reply: string) {
+    return this.http.post(`${API}/api/admin/complaints/${id}/respond`, { status, reply: reply || null });
   }
 
   pendingBarcodes() { return this.http.get<PendingBarcode[]>(`${API}/api/admin/barcodes/pending`); }
