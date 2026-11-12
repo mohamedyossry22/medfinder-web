@@ -204,5 +204,5 @@ export type PointsReason = 'Reply' | 'Missed' | 'AdSpend' | 'AdRefund';
 export interface PointsHistoryItem { delta: number; reason: PointsReason; note: string | null; createdAt: string; }
 export interface AdBalance {
   freeAds: number; freeAdsMax: number; points: number; pointsPerAd: number; adsFromPoints: number;
-  maxAdDays: number; renewsAt: string; history: PointsHistoryItem[];
+  maxAdDays: number; adRadiusKm: number; renewsAt: string; history: PointsHistoryItem[];
 }

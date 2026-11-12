@@ -19,10 +19,14 @@ export function duration(sec: number | null): string {
   return `${Math.round(sec / 60)} دقيقة`;
 }
 
-const LIFETIME_MS = 6 * 3600 * 1000;
-/** نسبة الوقت المتبقي للطلب (0..1) */
+const REPLY_WINDOW_MS = 120 * 60 * 1000;   // مهلة رد الصيدلية: 120 دقيقة
+/** نسبة الوقت المتبقي لرد الصيدلية (0..1). في الطلبات الواردة expiresAt = آخر وقت للرد */
 export const remainingFrac = (expiresAt: string, now: number) =>
-  Math.min(1, Math.max(0, (Date.parse(expiresAt) - now) / LIFETIME_MS));
+  Math.min(1, Math.max(0, (Date.parse(expiresAt) - now) / REPLY_WINDOW_MS));
+/** الدقايق المتبقية لرد الصيدلية */
+export const minutesLeft = (expiresAt: string, now: number) =>
+  Math.max(0, Math.ceil((Date.parse(expiresAt) - now) / 60000));
+/** الساعات المتبقية لفترة الاستلام والتسليم (6 ساعات من الإنشاء) */
 export const hoursLeft = (expiresAt: string, now: number) =>
   Math.max(0, Math.ceil((Date.parse(expiresAt) - now) / 3600000));
 

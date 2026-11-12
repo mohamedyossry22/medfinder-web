@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PharmacyStore } from './pharmacy.store';
 import { ResponseActionsComponent } from './response-actions.component';
-import { hoursLeft, remainingFrac, timeAgo } from '../core/fmt';
+import { minutesLeft, remainingFrac, timeAgo } from '../core/fmt';
 
 @Component({
   selector: 'app-incoming',
@@ -26,11 +26,11 @@ import { hoursLeft, remainingFrac, timeAgo } from '../core/fmt';
               <div class="muted">{{ r.drugNameAr }}</div>
               @if (r.activeIngredient) { <div class="muted" dir="ltr" style="font-size:12px;text-align:right;word-break: break-word;">{{ r.activeIngredient }}</div> }
             </div>
-            <svg width="48" height="48" viewBox="0 0 48 48" role="img" [attr.aria-label]="'متبقي ' + left(r.expiresAt) + ' ساعة'">
+            <svg width="48" height="48" viewBox="0 0 48 48" role="img" [attr.aria-label]="'متبقي ' + left(r.expiresAt) + ' دقيقة للرد'">
               <circle cx="24" cy="24" r="19" fill="none" stroke="var(--primary-soft)" stroke-width="5"/>
               <circle cx="24" cy="24" r="19" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round"
                       stroke-dasharray="119.4" [attr.stroke-dashoffset]="119.4 * (1 - frac(r.expiresAt))" transform="rotate(-90 24 24)"/>
-              <text x="24" y="29" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text)">{{ left(r.expiresAt) }}س</text>
+              <text x="24" y="29" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text)">{{ left(r.expiresAt) }}د</text>
             </svg>
           </div>
           <div class="row wrap">
@@ -49,6 +49,6 @@ import { hoursLeft, remainingFrac, timeAgo } from '../core/fmt';
 export class IncomingComponent {
   store = inject(PharmacyStore);
   frac = (e: string) => remainingFrac(e, this.store.now());
-  left = (e: string) => hoursLeft(e, this.store.now());
+  left = (e: string) => minutesLeft(e, this.store.now());
   ago = timeAgo;
 }

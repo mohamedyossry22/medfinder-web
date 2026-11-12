@@ -27,9 +27,10 @@ const addDays = (d: string, n: number) => { const x = new Date(`${d}T00:00:00`);
   imports: [FormsModule, ModalComponent],
   template: `
   <div class="row between wrap">
-    <p class="muted" style="margin:0">الإعلان بيظهر في الصفحة الرئيسية لتطبيق المستخدمين بعد موافقة الإدارة. مدة الإعلان حتى 3 أيام.</p>
+    <p class="muted" style="margin:0">الإعلان بيظهر في تطبيق المستخدمين بعد موافقة الإدارة: للمستخدمين القريبين منك: آخر 5 إعلانات في الصفحة الرئيسية، والباقي في صفحة الإعلانات. مدة الإعلان حتى 3 أيام.</p>
     <button class="btn btn-ghost" type="button" (click)="rules.set(true)">قواعد النقاط والإعلانات</button>
   </div>
+  <p class="muted" style="margin:0"><b>نطاق ظهور الإعلان:</b> إعلانك بيظهر بس للمستخدمين اللي في نطاق <b>{{ radius() }} كم</b> من موقع صيدليتك المسجل، فتأكد إن موقع صيدليتك مظبوط في البروفايل.</p>
 
   <!-- الرصيد -->
   @if (bal(); as b) {
@@ -59,6 +60,7 @@ const addDays = (d: string, n: number) => { const x = new Date(`${d}T00:00:00`);
   <!-- إعلان جديد -->
   <form class="card" style="max-width:640px" (ngSubmit)="submit()">
     <h3>إعلان جديد</h3>
+    <p class="muted" style="margin:0;font-size:13px">اسم صيدليتك ورقم الموبايل والعنوان والموقع المسجلين في بروفايلك بيظهروا للمستخدمين في تفاصيل الإعلان، والإعلان نفسه بيظهر بس لمن هم في نطاق {{ radius() }} كم من صيدليتك.</p>
     <div class="field"><label for="t">عنوان الإعلان (3 – 80 حرف)</label><input id="t" name="t" [(ngModel)]="f.title" maxlength="80" required></div>
     <div class="field"><label for="l">رابط (اختياري، https فقط)</label><input id="l" name="l" dir="ltr" placeholder="https://..." [(ngModel)]="f.link"></div>
     <div class="row wrap">
@@ -135,11 +137,17 @@ const addDays = (d: string, n: number) => { const x = new Date(`${d}T00:00:00`);
           <li>رد من 5 لـ 10 دقايق (مثلًا في الدقيقة 7): <b>نقطتين</b></li>
           <li>رد بعد كده: <b>نقطة واحدة</b></li>
           <li>الرد بأي حالة (متوفر / جزئي / غير متوفر) بيتحسب.</li>
+          <li>مهلة الرد على أي طلب <b>120 دقيقة</b> من وقت إنشائه.</li>
         </ul>
       </section>
       <section>
         <h4 style="margin:0 0 6px;color:var(--danger)">خصم عدم الرد</h4>
-        <p style="margin:0;line-height:1.8">لو الطلب انتهى (بعد 6 ساعات) وما رديتش عليه خالص، بيتخصم منك <b>نقطتين</b>. لو رصيدك صفر بيبقى <b>-2</b>، وبيتسدد من نقاط الردود الجاية.</p>
+        <p style="margin:0 0 6px;line-height:1.8">لو انتهت مهلة الرد (<b>120 دقيقة</b>) وما رديتش على الطلب خالص، بيتخصم منك <b>نقطتين</b>. لو رصيدك صفر بيبقى <b>-2</b>، وبيتسدد من نقاط الردود الجاية.</p>
+        <ul style="margin:0;padding-inline-start:20px;line-height:1.9">
+          <li><b>مفيش خصم</b> على الطلبات اللي اتعملت من الساعة <b>12 منتصف الليل لحد 9 الصبح</b> (بتوقيت القاهرة)، حتى لو ما رديتش عليها. ولو رديت عليها بتكسب نقاطها عادي.</li>
+          <li>الطلبات اللي اتعملت من <b>9 الصبح لحد 12 منتصف الليل</b> عليها الخصم.</li>
+          <li>العبرة بوقت إنشاء الطلب، مش بوقت ما شفته.</li>
+        </ul>
       </section>
       <section>
         <h4 style="margin:0 0 6px">إزاي تجيب إعلانات؟</h4>
@@ -148,6 +156,7 @@ const addDays = (d: string, n: number) => { const x = new Date(`${d}T00:00:00`);
           <li>الإعلانات المجانية مابتتراكمش: لو استخدمت إعلان وفاضلك واحد، في الشهر الجديد بيتضاف واحد بس عشان الرصيد يكمل إعلانين.</li>
           <li>أي إعلانات زيادة بتيجي من النقاط: <b>كل 50 نقطة = إعلان</b>.</li>
           <li>مدة الإعلان <b>لحد 3 أيام</b>.</li>
+          <li>الإعلان بيظهر <b>بس للمستخدمين اللي في نطاق {{ radius() }} كم</b> من موقع صيدليتك المسجل (مش لكل المستخدمين).</li>
           <li>تقدر توقف إعلان أو تعيد نشر إعلان قديم، وكل أمر نشر بيخصم من رصيدك (المجاني الأول وبعدين النقاط).</li>
           <li>لو الإدارة رفضت الإعلان قبل ما يظهر، رصيده بيرجع لك.</li>
         </ul>
@@ -195,6 +204,7 @@ export class AdsComponent implements OnInit {
   addDays = addDays;
   url = (p: string) => API + p;
 
+  radius = computed(() => this.bal()?.adRadiusKm ?? 10);
   available = computed(() => { const b = this.bal(); return b ? b.freeAds + b.adsFromPoints : 0; });
   renews = computed(() => { const b = this.bal(); return b ? new Date(b.renewsAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long' }) : ''; });
   costLabel = computed(() => {
